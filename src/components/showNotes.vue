@@ -2,22 +2,15 @@
 <div>
   <el-row class="tac">
   <el-col :span="4" :xs="8">
-    <!--<el-button style="width: 100%" size="mini"><i class="el-icon-date"></i>查询日期</el-button>-->
     <el-input
       placeholder="输入关键字进行搜索"
       v-model="filterText">
     </el-input>
-    <el-tree
-      class="filter-tree"
-      style="overflow:auto;height: 500px"
-      :data="notes"
-      :props="defaultProps"
-      default-expand-all
-      :filter-node-method="filterNode"
-      ref="tree"
-      @node-click="handleNodeClick"
-      empty-text="没有日志哦...">
-    </el-tree>
+    <b-list-group style="overflow:auto;height: 500px">
+      <b-list-group-item v-for="note in searchNotes" href="#" v-on:click="handleNodeClick(note)">
+        {{note.title}}<span style="font-size: x-small;color: #CDCDCD;text-align: right">{{note.date}}</span>
+      </b-list-group-item>
+    </b-list-group>
   </el-col>
   <el-col :span="19" :xs="15" style="margin: 2%;text-align: left">
     <h3>{{note.title}}</h3><h5>{{note.date}}</h5>
@@ -28,9 +21,18 @@
 </template>
 <script>
   export default {
-    watch: {
-      filterText(val) {
-        this.$refs.tree.filter(val);
+    computed:{
+      searchNotes:function () {
+        var filterText = this.filterText;
+        if(filterText){
+          return this.notes.filter(function(note){
+            /*some--是否存在true,相当于||*/
+            return Object.keys(note).some(function(key){
+              return String(note[key]).toLowerCase().indexOf(filterText) > -1
+            })
+          })
+        }
+        return this.notes;
       }
     },
     data () {
@@ -61,10 +63,6 @@
       handleNodeClick(data) {
         console.log(data.id);
         this.note = data;
-      },
-      filterNode(value, data) {
-        if (!value) return true;
-        return data.title.indexOf(value) !== -1;
       }
     }
   }
