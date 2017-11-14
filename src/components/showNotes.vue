@@ -13,7 +13,9 @@
     </b-list-group>
   </el-col>
   <el-col :span="19" :xs="15" style="margin: 2%;text-align: left">
-    <h3>{{note.title}}</h3><h5>{{note.date}}</h5>
+    <b-button v-if="note.title != null" style="float: right;" v-on:click="deleteNote(note)">删除</b-button>
+    <h3>{{note.title}}</h3>
+    <h5>{{note.date}}</h5>
     <p style="text-indent: 2em" v-html="note.text"></p>
   </el-col>
   </el-row>
@@ -38,7 +40,9 @@
     data () {
       return {
         notes: [],
-        note:{},
+        note:{
+          title:null
+        },
         defaultProps: {
           label:'title',
           children:''
@@ -63,6 +67,33 @@
       handleNodeClick(data) {
         console.log(data.id);
         this.note = data;
+      },
+      deleteNote(){
+        //console.log(JSON.stringify(this.note));
+        this.$ajax.post(
+          '/note/deleteNote',
+          JSON.stringify(this.note), {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }
+        ).then((res) => {
+          if(res.data.message==="success"){
+            this.$message({
+              message: '日记删除成功！',
+              type: 'success'
+            });
+            this.notes = res.data.data;
+            this.note = {title:null};
+          }else{
+            console.log(res.data.data);
+            this.$message({
+              message: '日记删除失败！',
+              type: 'warning'
+            });}
+        }).catch(res => {
+          console.log(res)
+        });
       }
     }
   }

@@ -13,7 +13,7 @@ import axios from 'axios'
 Vue.use(BootstrapVue);
 Vue.use(ElementUI);
 Vue.config.productionTip = false
-axios.defaults.baseURL='http://www.easy-mock.com/mock/5a053840adbeb55b90c46f71/mynote'
+//axios.defaults.baseURL='http://www.easy-mock.com/mock/5a053840adbeb55b90c46f71/mynote'
 Vue.prototype.$ajax = axios
 
 /* eslint-disable no-new */
